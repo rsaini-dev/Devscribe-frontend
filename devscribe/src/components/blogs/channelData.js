@@ -1,0 +1,17 @@
+export const channelNames = [
+  "TechWizard",
+  "CodeCracker",
+  "PixelMaster",
+  "DesignDiva",
+  "ByteHunter",
+  "CloudSurfer",
+  "AI_Guru",
+  "DevNinja",
+  "LogicLord",
+  "UI_Champion",
+  "ReactRanger",
+  "MERN_Explorer",
+  "BugSlayer",
+  "StackWizard",
+  "FrontendKing",
+];

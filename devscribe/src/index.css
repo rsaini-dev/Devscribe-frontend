@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-smokey : #11120D;
+  --color-olive : #565449;
+  --color-bone : #D8CFBC;
+  --color-floral : #FFFBF4;
+}
