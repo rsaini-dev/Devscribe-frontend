@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/devscribe.svg";
-import { Search } from "lucide-react";
-import { User } from "lucide-react";
+import { Search, User, Bell, Plus } from "lucide-react";
 import { RxExit } from "react-icons/rx";
-import { Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
+  const navigate = useNavigate()
+
   const [menu, setMenu] = useState(false);
 
   const menuRef = useRef(null);
@@ -14,6 +15,12 @@ const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
 
     setMenu((prev) => !prev);
   };
+
+  const onNavigate = (params) =>{
+    navigate(`/${params}`);
+  }
+
+  
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -36,6 +43,7 @@ const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
           src={logo}
           alt="Devscribe"
           className="h-20 w-auto transition-transform duration-300 hover:scale-110 cursor-pointer"
+          onClick={() => onNavigate('blogs')}
         />
 
         {/* Search Bar */}
@@ -68,6 +76,11 @@ const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
 
           {profile && (
             <div className="relative flex">
+
+              <button className="flex mr-2 px-4 py-2 bg-[#85bbf1] text-zinc-700 rounded-2xl cursor-pointer" onClick={() => onNavigate('create')}>
+                <Plus />
+                <span className="ml-2">Create</span>
+              </button>
               <button className="px-4 py-2 text-zinc-700 rounded-md cursor-pointer">
                 <Bell />
               </button>

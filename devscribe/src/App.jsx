@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React, { useState ,lazy, Suspense  } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import Modal from "./components/Modal/Modal";
 import useAuth from "./hooks/useAuth";
-import Home from "./pages/Home"
-import BlogFeed from "./pages/BlogFeed"
+import Home from "./pages/Home";
+import BlogFeed from "./pages/BlogFeed";
+import CreateBlogs from "./pages/CreateBlogs";
+import Footer from "./components/Footer";
 
 // const Home = lazy (() => import("./pages/Home"))
 // const BlogFeed = lazy (() => import("./pages/BlogFeed"))
@@ -46,7 +48,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blogs" element={<BlogFeed />} />
+        <Route path="/create" element={<CreateBlogs />} />
       </Routes>
+      <Footer />
     </Router>
   );
 };
