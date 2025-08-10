@@ -20,6 +20,11 @@ const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
     navigate(`/${params}`);
   }
 
+  const handleLogout = () =>{
+    onLogout()
+    navigate("/")
+  }
+
   
 
   // Close menu when clicking outside
@@ -116,7 +121,7 @@ const Navbar = ({ profile, onLoginClick, onSignUpClick, onLogout }) => {
                   </button>
                   <button
                     className=" py-4  rounded-md cursor-pointer"
-                    onClick={onLogout}
+                    onClick={handleLogout}
                   >
                     <RxExit />
                   </button>

@@ -1,23 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import imgLogin from "../../assets/images/bloglogin.webp";
 import { IoIosClose } from "react-icons/io";
 import logo from "../../assets/devscribe.svg";
 import { useNavigate } from "react-router-dom";
+import { login, signup } from "../../services/userService";
 
-const Modal = ({ type, onClose ,onLogin}) => {
-    const navigate = useNavigate()
+const Modal = ({ type, onClose, onLogin }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
-    const [currentType, setCurrentType] =  useState(type)
-    const handleSubmit = (e) =>{
-        e.preventDefault()
-        const role = type === 'login' ? 'user' : 'admin';
-        console.log('submittin form');
+  const [currentType, setCurrentType] = useState(type);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        onLogin(role); 
-        navigate('/blogs')
-    } 
+    try {
+      let data;
 
-  console.log("values ", type);
+      if (type === "login") {
+        data = await login(email, password);
+      } else if (type === "signup") {
+        await signup(name, email, phoneNumber, password);
+        data = await login(email, password); // auto-login after signup
+      }
+
+      if (data?.user) {
+        onLogin(data.user.role);
+      }
+
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      navigate("/blogs");
+    } catch (err) {
+      console.error(
+        `${type === "login" ? "Login" : "Signup"} failed:`,
+        err.response?.data?.message || err.message
+      );
+    }
+  };
+
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setPhoneNumber("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleToggleType = () => {
+    resetForm();
+    setCurrentType(currentType === "login" ? "signup" : "login");
+  };
+
+  const isFormValid = () => {
+    if (currentType === "login") {
+      return email.trim() !== "" && password.trim() !== "";
+    } else if (currentType === "signup") {
+      return (
+        name.trim() !== "" &&
+        password.trim() !== "" &&
+        phoneNumber.trim() !== "" &&
+        confirmPassword.trim() !== "" &&
+        password === confirmPassword
+      );
+    }
+    return false;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -50,6 +104,8 @@ const Modal = ({ type, onClose ,onLogin}) => {
               {currentType === "signup" && (
                 <input
                   type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your full name"
                   className=" w-full bg-gray-200 border-none mb-4 p-2 rounded-xl"
                 />
@@ -57,6 +113,8 @@ const Modal = ({ type, onClose ,onLogin}) => {
 
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 className=" w-full bg-gray-200 border-none mb-4 p-2 rounded-xl"
               />
@@ -64,6 +122,8 @@ const Modal = ({ type, onClose ,onLogin}) => {
               {currentType === "signup" && (
                 <input
                   type="text"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="Enter your phone number"
                   className=" w-full bg-gray-200 border-none mb-4 p-2 rounded-xl"
                 />
@@ -71,6 +131,8 @@ const Modal = ({ type, onClose ,onLogin}) => {
 
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className=" w-full bg-gray-200 border-none mb-4 p-2 rounded-xl"
               />
@@ -78,10 +140,20 @@ const Modal = ({ type, onClose ,onLogin}) => {
               {currentType === "signup" && (
                 <input
                   type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Enter your password again"
                   className=" w-full bg-gray-200 border-none mb-4 p-2 rounded-xl"
                 />
               )}
+
+              {currentType === "signup" &&
+                confirmPassword &&
+                confirmPassword !== password && (
+                  <p className="text-red-500 text-sm mb-2">
+                    Passwords do not match
+                  </p>
+                )}
 
               <div className="flex mb-2">
                 <input
@@ -98,16 +170,25 @@ const Modal = ({ type, onClose ,onLogin}) => {
                     : "I agree to all terms and privacy policy"}
                 </label>
               </div>
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700" type="submit">
-              {currentType === "login" ? "Login" : "Sign Up"}
-            </button>
+              <button
+                className={`px-4 py-2 bg-indigo-600 text-white rounded-md 
+                  ${isFormValid() ? "hover:bg-indigo-700" : ""} 
+                  ${!isFormValid() ? "opacity-50 cursor-not-allowed" : ""}`}
+                type="submit"
+                disabled={!isFormValid()}
+              >
+                {currentType === "login" ? "Login" : "Sign Up"}
+              </button>
             </form>
 
             <p className="mt-2">
               {type === "login"
                 ? "Don't have an account? "
                 : "Already have an account? "}
-              <button className="text-indigo-600 ml-1 font-semibold" onClick={() => setCurrentType(currentType === 'login' ? 'signup' : 'login')}>
+              <button
+                className="text-indigo-600 ml-1 font-semibold"
+                onClick={handleToggleType}
+              >
                 {currentType === "login" ? "Sign up" : "Login"}
               </button>
             </p>

@@ -20,6 +20,7 @@ const useAuth = () =>{
     }
 
     const logout = () =>{
+      localStorage.removeItem("token");
         setProfile(null)
     }
 
