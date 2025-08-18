@@ -20,7 +20,7 @@ const ShiftEnterNewParagraph = Extension.create({
   },
 })
 
-const BlogEditor = () => {
+const BlogEditor = ({ onChange }) => {
   const [_, setEditorUpdated] = useState(false);
   const editor = useEditor({
     extensions: [
@@ -39,6 +39,12 @@ const BlogEditor = () => {
         <h1>Start writing your blog here</h1>
         <p>what's in your mind</p>
       `,
+      onUpdate: ({ editor }) => {
+      // Send JSON to parent whenever content changes
+      const json = editor.getJSON();
+      const html = editor.getHTML()
+      onChange(json, html);
+    },
   });
 
   useEffect(() => {
@@ -51,6 +57,7 @@ const BlogEditor = () => {
     editor.on("selectionUpdate", update);
 
     return () => {
+      if (editor) editor.destroy();
       editor.off("update", update);
       editor.off("selectionUpdate", update);
     };

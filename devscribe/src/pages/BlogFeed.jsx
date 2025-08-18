@@ -1,14 +1,13 @@
-import React from 'react'
-import SubscribedBlogs from '../components/blogs/SubscribedBlogs'
-import BlogsContainer from '../components/blogs/BlogsContainer'
-
+import React from "react";
+import SubscribedBlogs from "../components/blogs/SubscribedBlogs";
+import BlogsContainer from "../components/blogs/BlogsContainer";
 
 const BlogFeed = () => {
   return (
-    <div className="flex justify-between text-white">
-      <BlogsContainer/>
-    </div>
-  )
-}
+    <>
+      <BlogsContainer />
+    </>
+  );
+};
 
-export default BlogFeed
+export default BlogFeed;

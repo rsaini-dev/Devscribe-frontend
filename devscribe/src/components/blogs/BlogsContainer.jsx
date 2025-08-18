@@ -1,17 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import SubscribedBlogs from "./SubscribedBlogs";
 import BlogsDetails from "./BlogsDetails";
+import {getAllPosts} from "../../services/postService"
+import DevScribeLoader from "../ui/Loader";
 
 const BlogsContainer = () => {
   const [subsMenu, setSubMenu] = useState(false);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true); // to track API loading state
+  const [error, setError] = useState(null); // to track API errors
+
 
   const toggleMenu = () => {
     setSubMenu((prev) => !prev);
   };
 
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllPosts();
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setBlogs(data || []); // adjust if your API returns a different key
+        console.log(blogs);
+      } catch (err) {
+        setError(err.message || "Failed to load blogs");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  if (loading) return <DevScribeLoader />;
+
   return (
-    <div className="w-full bg-zinc-800 relative overflow-hidden">
+
+    <div className="p-6 text-white">
+          {blogs.length > 0 ? (
+            <div className="flex justify-between">
+              <div className="w-full bg-zinc-800 relative overflow-hidden">
       {/* Blogs */}
       <div
         className="flex-1 px-2 transition-all duration-500"
@@ -19,7 +49,7 @@ const BlogsContainer = () => {
           marginLeft: subsMenu ? "17rem" : "0rem", // 17rem ≈ ml-68
         }}
       >
-        <BlogsDetails />
+        <BlogsDetails blogData={blogs}/>
       </div>
       {/* Button & Sidebar */}
       <div className="relative">
@@ -52,6 +82,12 @@ const BlogsContainer = () => {
         )}
       </div>
     </div>
+            </div>
+          ) : (
+            <div>No Blogs found!</div>
+          )}
+        </div>
+    
   );
 };
 
